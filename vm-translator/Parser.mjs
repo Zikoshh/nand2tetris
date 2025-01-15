@@ -8,40 +8,30 @@ class Parser {
       .map((line) => line.replace(/\/\/.*$/, '').trim())
       .filter((line) => line.length > 0);
     this.currentCommand = null;
-    this.currentIndex = -1;
+    this.currentIndex = 0;
   }
 
   hasMoreCommands() {
-    return this.currentIndex < this.commands.length - 1;
+    return this.currentIndex < this.commands.length;
   }
 
   advance() {
     if (this.hasMoreCommands()) {
-      this.currentIndex++;
       this.currentCommand = this.commands[this.currentIndex];
+      this.currentIndex++;
     }
   }
 
   commandType() {
-    if (/^(add|sub|neg|eq|gt|lt|and|or|not)$/.test(this.currentCommand)) {
-      return 'C_ARITHMETIC';
-    } else if (/^push/.test(this.currentCommand)) {
-      return 'C_PUSH';
-    } else if (/^pop/.test(this.currentCommand)) {
-      return 'C_POP';
-    } else if (/^label/.test(this.currentCommand)) {
-      return 'C_LABEL';
-    } else if (/^goto/.test(this.currentCommand)) {
-      return 'C_GOTO';
-    } else if (/^if-goto/.test(this.currentCommand)) {
-      return 'C_IF';
-    } else if (/^function/.test(this.currentCommand)) {
-      return 'C_FUNCTION';
-    } else if (/^call/.test(this.currentCommand)) {
-      return 'C_CALL';
-    } else if (/^return/.test(this.currentCommand)) {
-      return 'C_RETURN';
-    }
+    if (this.currentCommand.startsWith('push')) return 'C_PUSH';
+    if (this.currentCommand.startsWith('pop')) return 'C_POP';
+    if (this.currentCommand.startsWith('label')) return 'C_LABEL';
+    if (this.currentCommand.startsWith('goto')) return 'C_GOTO';
+    if (this.currentCommand.startsWith('if-goto')) return 'C_IF';
+    if (this.currentCommand.startsWith('function')) return 'C_FUNCTION';
+    if (this.currentCommand.startsWith('call')) return 'C_CALL';
+    if (this.currentCommand.startsWith('return')) return 'C_RETURN';
+    return 'C_ARITHMETIC';
   }
 
   arg1() {
@@ -52,11 +42,8 @@ class Parser {
   }
 
   arg2() {
-    let cType = this.commandType();
-    if (['C_PUSH', 'C_POP', 'C_FUNCTION', 'C_CALL'].includes(cType)) {
-      return parseInt(this.currentCommand.split(' ')[2], 10);
-    }
+    return parseInt(this.currentCommand.split(' ')[2], 10);
   }
 }
 
-module.exports = Parser;
+export default Parser;

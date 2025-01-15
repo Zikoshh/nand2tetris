@@ -57,7 +57,7 @@ files.forEach((file) => {
         codeWriter.writeReturn();
         break;
       default:
-        throw new Error(`Неизвестный тип команды`);
+        throw new Error(`Неизвестный тип команды: ${commandType}`);
     }
   }
 });
